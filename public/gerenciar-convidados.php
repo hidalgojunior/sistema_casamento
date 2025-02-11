@@ -115,10 +115,20 @@ $lista_convidados = $convidado->listarPorEvento($evento_id);
                                     <?php echo $row['is_padrinho'] ? 'Sim' : 'Não'; ?>
                                 </td>
                                 <td class="px-4 py-2 text-center">
-                                    <a href="gerar-convite.php?convidado_id=<?php echo $row['id']; ?>" 
-                                       class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm">
-                                        Gerar Convite
-                                    </a>
+                                    <div class="flex justify-center space-x-2">
+                                        <a href="editar-convidado.php?id=<?php echo $row['id']; ?>" 
+                                           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button onclick="excluirConvidado(<?php echo $row['id']; ?>)"
+                                                class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <a href="gerar-convite.php?convidado_id=<?php echo $row['id']; ?>" 
+                                           class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -136,6 +146,37 @@ $lista_convidados = $convidado->listarPorEvento($evento_id);
             Formar Pares de Padrinhos
         </a>
     </div>
+
+    <!-- Adicione este botão junto aos outros botões de ação -->
+    <a href="gerar-pdf-convites.php?evento_id=<?php echo $evento_id; ?>" 
+       class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        Gerar PDF dos Convites
+    </a>
 </div>
+
+<script>
+function excluirConvidado(id) {
+    if (confirm('Tem certeza que deseja excluir este convidado?')) {
+        fetch('excluir-convidado.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id=${id}&evento_id=<?php echo $evento_id; ?>`
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao excluir convidado');
+        });
+    }
+}
+</script>
 
 <?php require_once '../includes/footer.php'; ?> 
